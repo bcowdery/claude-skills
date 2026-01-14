@@ -1,6 +1,6 @@
 ---
-name: code-refactor
-description: Structural code refactoring using ast-grep for syntax-aware search, analysis, and transformation of code patterns across multiple files. Use when renaming functions/classes, restructuring code architecture, or performing syntax-aware find-and-replace operations.
+name: ast-refactor
+description: This skill should be used when transforming, refactoring, or replacing code patterns across multiple files. Use for renaming functions/classes/variables, migrating API usage patterns, modernizing syntax, or performing bulk code transformations. Prefer ast-grep over sed/awk for syntax-aware replacements that understand language structure.
 allowed-tools:
   - Read
   - Glob
@@ -14,24 +14,26 @@ context: fork
 agent: general-purpose
 ---
 
-# Structural Refactoring Skill
+# AST-Aware Code Refactoring
 
 ## Overview
 
-Perform systematic code refactoring using ast-grep, a syntax-aware tool that finds and transforms code patterns based on abstract syntax trees rather than plain text matching.
+Transform code patterns systematically using ast-grep, a syntax-aware tool that finds and replaces code based on abstract syntax trees rather than plain text matching.
 
 ## When to Use
 
-Use this skill when:
-- Renaming functions, classes, variables across the codebase
-- Restructuring code architecture (moving, splitting, combining modules)
-- Performing syntax-aware find-and-replace operations
+**Use this skill when:**
+- Renaming functions, classes, or variables across the codebase
 - Migrating API usage patterns (e.g., `console.log` → `logger.info`)
-- Refactoring design patterns or code organization
+- Modernizing syntax (e.g., `var` → `const`, `require` → `import`)
+- Replacing deprecated function calls with new equivalents
+- Restructuring code architecture (moving, splitting, combining modules)
+- Performing bulk transformations that require syntax awareness
 
-Do NOT use this skill for:
-- Simple text find-and-replace (use regular grep/sed)
-- Single-file edits (use Edit tool directly)
+**Do NOT use this skill for:**
+- Searching/exploring code without transformations (use `ast-search` instead)
+- Simple text replacements in non-code files (use sed/grep)
+- Single-file edits with no pattern repetition (use Edit tool directly)
 - Non-structural changes (comments, formatting)
 - Bug fixes that don't involve pattern transformation
 
