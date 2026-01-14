@@ -1,5 +1,6 @@
 {
   "name": "patsy-marketplace",
+  "description": "A eager collection of AI skills ready to do your bidding without asking questions.",
   "owner": {
     "name": "Brian Cowdery",
     "email": "brian@thebeardeddeveloper.co"
@@ -7,10 +8,9 @@
   "plugins": [
     {
       "name": "patsy",
-      
-      "description": "A eager collection of AI skills ready to do your bidding without asking questions. Your willing accomplice in code.",
-      "version": "0.1.0",
-      "source": "./",
+      "description": "A suite of development tools to handle the tedious bits; crafting pull requests, generating project plans, and performing structural refactoring — so you can take all the credit.",
+      "version": "1.0.0",
+      "source": "./patsy-plugin",
       "author": {
         "name": "Brian Cowdery",
         "email": "brian@thebeardeddeveloper.co"
