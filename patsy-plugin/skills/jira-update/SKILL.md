@@ -33,8 +33,9 @@ Do NOT use this skill for:
 
 **Update Issue:**
 ```
-atlassian:updateJiraIssue
-  issueKey: "KEY-123"
+mcp__plugin_patsy_atlassian__editJiraIssue
+  cloudId: "your-cloud-id"
+  issueIdOrKey: "KEY-123"
   fields: {
     assignee: { accountId: "user-id" },
     labels: ["label1", "label2"],
@@ -44,16 +45,18 @@ atlassian:updateJiraIssue
 
 **Add Comment:**
 ```
-atlassian:addJiraComment
-  issueKey: "KEY-123"
-  body: "Comment text"
+mcp__plugin_patsy_atlassian__addCommentToJiraIssue
+  cloudId: "your-cloud-id"
+  issueIdOrKey: "KEY-123"
+  commentBody: "Comment text"
 ```
 
 **Transition Status:**
 ```
-atlassian:transitionJiraIssue
-  issueKey: "KEY-123"
-  transitionId: "transition-id"
+mcp__plugin_patsy_atlassian__transitionJiraIssue
+  cloudId: "your-cloud-id"
+  issueIdOrKey: "KEY-123"
+  transition: { id: "transition-id" }
 ```
 
 ### CLI Fallback
@@ -85,10 +88,12 @@ acli jira workitem transition \
 ### 1. Check for MCP Server Availability
 
 First, check if the Atlassian MCP Server is available by looking for these tools:
-- `atlassian:updateJiraIssue` - Update issue fields
-- `atlassian:addJiraComment` - Add comments to issues
-- `atlassian:transitionJiraIssue` - Change issue status
-- `atlassian:getJiraIssue` - Get issue details (for validation)
+- `mcp__plugin_patsy_atlassian__editJiraIssue` - Update issue fields
+- `mcp__plugin_patsy_atlassian__addCommentToJiraIssue` - Add comments to issues
+- `mcp__plugin_patsy_atlassian__transitionJiraIssue` - Change issue status
+- `mcp__plugin_patsy_atlassian__getJiraIssue` - Get issue details (for validation)
+- `mcp__plugin_patsy_atlassian__getTransitionsForJiraIssue` - Get available transitions
+- `mcp__plugin_patsy_atlassian__getAccessibleAtlassianResources` - Get cloud ID
 
 If MCP tools are available, prefer using them over the CLI approach.
 
@@ -194,24 +199,40 @@ When using MCP, fields are provided as a JSON object. When using CLI, use these 
 
 The Atlassian MCP Server provides these JIRA update tools:
 
-- **`atlassian:updateJiraIssue`** - Update issue fields
-  - Parameters: `issueKey` (string), `fields` (object with field names and values)
+- **`mcp__plugin_patsy_atlassian__editJiraIssue`** - Update issue fields
+  - Parameters:
+    - `cloudId` (string) - Atlassian cloud instance ID or site URL
+    - `issueIdOrKey` (string) - Issue key (e.g., "KEY-123")
+    - `fields` (object) - Field names and values to update
   - Returns: Updated issue details
   - Example fields: `summary`, `description`, `assignee`, `labels`, `priority`
 
-- **`atlassian:addJiraComment`** - Add a comment to an issue
-  - Parameters: `issueKey` (string), `body` (string - comment text)
+- **`mcp__plugin_patsy_atlassian__addCommentToJiraIssue`** - Add a comment to an issue
+  - Parameters:
+    - `cloudId` (string) - Atlassian cloud instance ID or site URL
+    - `issueIdOrKey` (string) - Issue key
+    - `commentBody` (string) - Comment text (supports markdown)
+    - `commentVisibility` (object, optional) - Restrict visibility to group/role
   - Returns: Created comment details
 
-- **`atlassian:transitionJiraIssue`** - Change issue status
-  - Parameters: `issueKey` (string), `transitionId` (string or number)
+- **`mcp__plugin_patsy_atlassian__transitionJiraIssue`** - Change issue status
+  - Parameters:
+    - `cloudId` (string) - Atlassian cloud instance ID or site URL
+    - `issueIdOrKey` (string) - Issue key
+    - `transition` (object) - Object with `id` field containing transition ID
+    - `fields` (object, optional) - Additional fields required by transition
   - Returns: Updated issue with new status
-  - Note: Use `atlassian:getJiraIssue` first to discover available transitions
+  - Note: Use `mcp__plugin_patsy_atlassian__getTransitionsForJiraIssue` first to discover available transitions
 
-- **`atlassian:getJiraIssue`** - Get issue details
-  - Parameters: `issueKey` (string)
-  - Returns: Full issue details including available transitions
-  - Use this to validate the issue exists and get transition IDs
+- **`mcp__plugin_patsy_atlassian__getJiraIssue`** - Get issue details
+  - Parameters: `cloudId` (string), `issueIdOrKey` (string)
+  - Returns: Full issue details
+  - Use this to validate the issue exists
+
+- **`mcp__plugin_patsy_atlassian__getTransitionsForJiraIssue`** - Get available transitions
+  - Parameters: `cloudId` (string), `issueIdOrKey` (string)
+  - Returns: List of available transitions with IDs and names
+  - Use this to get the transition ID before calling transitionJiraIssue
 
 ### MCP vs CLI Usage
 
@@ -231,8 +252,9 @@ The Atlassian MCP Server provides these JIRA update tools:
 
 **Update multiple fields:**
 ```
-1. Use atlassian:updateJiraIssue with:
-   issueKey: "KEY-123"
+1. Use mcp__plugin_patsy_atlassian__editJiraIssue with:
+   cloudId: "your-cloud-id"
+   issueIdOrKey: "KEY-123"
    fields: {
      summary: "New title",
      labels: ["bug", "high-priority"],
@@ -242,11 +264,18 @@ The Atlassian MCP Server provides these JIRA update tools:
 
 **Add comment and transition:**
 ```
-1. Use atlassian:addJiraComment with:
-   issueKey: "KEY-123"
-   body: "Work completed, moving to Done"
+1. Use mcp__plugin_patsy_atlassian__addCommentToJiraIssue with:
+   cloudId: "your-cloud-id"
+   issueIdOrKey: "KEY-123"
+   commentBody: "Work completed, moving to Done"
 
-2. Use atlassian:transitionJiraIssue with:
-   issueKey: "KEY-123"
-   transitionId: "31"
+2. Get available transitions:
+   Use mcp__plugin_patsy_atlassian__getTransitionsForJiraIssue with:
+   cloudId: "your-cloud-id"
+   issueIdOrKey: "KEY-123"
+
+3. Use mcp__plugin_patsy_atlassian__transitionJiraIssue with:
+   cloudId: "your-cloud-id"
+   issueIdOrKey: "KEY-123"
+   transition: { id: "31" }
 ```

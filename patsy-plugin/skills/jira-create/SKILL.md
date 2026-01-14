@@ -33,13 +33,14 @@ Do NOT use this skill for:
 
 **Create Issue:**
 ```
-atlassian:createJiraIssue
-  project: "KEY"
-  issueType: "Story"
+mcp__plugin_patsy_atlassian__createJiraIssue
+  cloudId: "your-cloud-id"
+  projectKey: "KEY"
+  issueTypeName: "Story"
   summary: "Ticket summary"
   description: "Description text"
-  fields: {
-    assignee: { accountId: "user-id" },
+  assignee_account_id: "user-id" (optional)
+  additional_fields: {
     labels: ["bug", "urgent"],
     priority: { name: "High" }
   }
@@ -72,8 +73,9 @@ acli jira workitem create \
 ### 1. Check for MCP Server Availability
 
 First, check if the Atlassian MCP Server is available by looking for these tools:
-- `atlassian:createJiraIssue` - Create new issues
-- `atlassian:getJiraIssue` - Get issue details (for validation)
+- `mcp__plugin_patsy_atlassian__createJiraIssue` - Create new issues
+- `mcp__plugin_patsy_atlassian__getJiraIssue` - Get issue details (for validation)
+- `mcp__plugin_patsy_atlassian__getAccessibleAtlassianResources` - Get cloud ID
 
 If MCP tools are available, prefer using them over the CLI approach.
 
@@ -145,13 +147,14 @@ Use the appropriate MCP tool or CLI command based on availability.
 
 **MCP Example:**
 ```
-atlassian:createJiraIssue with:
-  project: "PROJ"
-  issueType: "Story"
+mcp__plugin_patsy_atlassian__createJiraIssue with:
+  cloudId: "your-cloud-id"
+  projectKey: "PROJ"
+  issueTypeName: "Story"
   summary: "Add user authentication system"
   description: "[formatted markdown description]"
-  fields: {
-    assignee: { accountId: "user-id" },
+  assignee_account_id: "user-id"
+  additional_fields: {
     labels: ["security", "backend"]
   }
 ```
@@ -282,19 +285,26 @@ This prompts for:
 
 The Atlassian MCP Server provides these JIRA creation tools:
 
-- **`atlassian:createJiraIssue`** - Create a new issue
+- **`mcp__plugin_patsy_atlassian__createJiraIssue`** - Create a new issue
   - Parameters:
-    - `project` (string) - Project key
-    - `issueType` (string) - Issue type (Story, Bug, Task, Epic)
+    - `cloudId` (string) - Atlassian cloud instance ID or site URL
+    - `projectKey` (string) - Project key (e.g., "PROJ")
+    - `issueTypeName` (string) - Issue type (Story, Bug, Task, Epic)
     - `summary` (string) - Issue title
     - `description` (string) - Issue description (supports markdown)
-    - `fields` (object, optional) - Additional fields like assignee, labels, priority
+    - `assignee_account_id` (string, optional) - User account ID for assignee
+    - `additional_fields` (object, optional) - Additional fields like labels, priority, components
   - Returns: Created issue details with key and link
 
-- **`atlassian:getJiraIssue`** - Get issue details
-  - Parameters: `issueKey` (string)
+- **`mcp__plugin_patsy_atlassian__getJiraIssue`** - Get issue details
+  - Parameters: `cloudId` (string), `issueIdOrKey` (string)
   - Returns: Full issue details
   - Use this to validate the project exists or check created ticket
+
+- **`mcp__plugin_patsy_atlassian__getAccessibleAtlassianResources`** - Get cloud ID
+  - Parameters: None
+  - Returns: List of accessible Atlassian resources with cloud IDs
+  - Use this to discover the cloud ID for your Atlassian instance
 
 ### MCP vs CLI Usage
 
@@ -314,17 +324,21 @@ The Atlassian MCP Server provides these JIRA creation tools:
 
 **Create a story with full details:**
 ```
-1. Use atlassian:createJiraIssue with:
-   project: "PROJ"
-   issueType: "Story"
+1. Get cloud ID (if not already known):
+   Use mcp__plugin_patsy_atlassian__getAccessibleAtlassianResources
+
+2. Create the issue:
+   Use mcp__plugin_patsy_atlassian__createJiraIssue with:
+   cloudId: "your-cloud-id-or-site-url"
+   projectKey: "PROJ"
+   issueTypeName: "Story"
    summary: "Implement user authentication"
    description: "# User Story\n\nAs a user I want to log in securely...\n\n## Acceptance Criteria\n\n- [ ] MUST support email/password login\n- [ ] SHOULD include 2FA option"
-   fields: {
-     assignee: { accountId: "user-id" },
+   assignee_account_id: "user-id"
+   additional_fields: {
      labels: ["security", "backend"],
-     priority: { name: "High" },
-     components: [{ name: "Authentication" }]
+     priority: { name: "High" }
    }
 
-2. MCP returns issue key (e.g., "PROJ-123") and link
+3. MCP returns issue key (e.g., "PROJ-123") and link
 ```

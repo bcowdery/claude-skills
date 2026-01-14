@@ -31,17 +31,25 @@ Do NOT use this skill for:
 
 ### MCP Server (Preferred)
 
-**Search Issues:**
+**Natural Language Search (Rovo):**
 ```
-atlassian:searchJiraIssues
+mcp__plugin_patsy_atlassian__search
+  query: "my open high priority tickets"
+```
+
+**JQL Search:**
+```
+mcp__plugin_patsy_atlassian__searchJiraIssuesUsingJql
+  cloudId: "your-cloud-id"
   jql: "assignee = currentUser() AND status NOT IN (Done, Closed)"
   maxResults: 50
 ```
 
 **Get Single Issue:**
 ```
-atlassian:getJiraIssue
-  issueKey: "KEY-123"
+mcp__plugin_patsy_atlassian__getJiraIssue
+  cloudId: "your-cloud-id"
+  issueIdOrKey: "KEY-123"
 ```
 
 ### CLI Fallback
@@ -78,8 +86,11 @@ acli jira workitem search \
 ### 1. Check for MCP Server Availability
 
 First, check if the Atlassian MCP Server is available by looking for these tools:
-- `atlassian:searchJiraIssues` - Search for JIRA issues using JQL
-- `atlassian:getJiraIssue` - Get a specific JIRA issue by key
+- `mcp__plugin_patsy_atlassian__search` - Natural language search across Jira and Confluence (Rovo)
+- `mcp__plugin_patsy_atlassian__searchJiraIssuesUsingJql` - Search JIRA issues using JQL
+- `mcp__plugin_patsy_atlassian__getJiraIssue` - Get a specific JIRA issue by key
+- `mcp__plugin_patsy_atlassian__fetch` - Get details by ARI (from search results)
+- `mcp__plugin_patsy_atlassian__getAccessibleAtlassianResources` - Get cloud ID
 
 If MCP tools are available, prefer using them over the CLI approach described below.
 
@@ -111,17 +122,30 @@ project = KEY AND status = "In Progress" AND assignee = currentUser()
 
 ### 4. Execute Search
 
-**Option A: Using MCP Server (Preferred)**
+**Option A: Using MCP Server - Natural Language (Preferred)**
 
-If the Atlassian MCP Server is available, use the `atlassian:searchJiraIssues` tool:
+For simple queries, use the natural language Rovo search:
 
 ```
-Use the atlassian:searchJiraIssues tool with:
+Use mcp__plugin_patsy_atlassian__search with:
+- query: "my open tickets assigned to me"
+```
+
+This returns ARI identifiers. Use `mcp__plugin_patsy_atlassian__fetch` with the ARI to get full details.
+
+**Option B: Using MCP Server - JQL**
+
+For complex queries requiring precise JQL:
+
+```
+Use mcp__plugin_patsy_atlassian__searchJiraIssuesUsingJql with:
+- cloudId: "your-cloud-id"
 - jql: "assignee = currentUser() AND status NOT IN (Done, Closed)"
 - maxResults: 50
+- fields: ["summary", "description", "status", "priority"]
 ```
 
-**Option B: Using Atlassian CLI (Fallback)**
+**Option C: Using Atlassian CLI (Fallback)**
 
 ```bash
 acli jira workitem search \
@@ -266,14 +290,33 @@ acli jira workitem search \
 
 ### Available Tools
 
-The Atlassian MCP Server provides these JIRA-related tools:
+The Atlassian MCP Server provides these JIRA search tools:
 
-- **`atlassian:searchJiraIssues`** - Search for issues using JQL
-  - Parameters: `jql` (string), `maxResults` (number, default 50)
-  - Returns: Array of issue objects with key, summary, status, assignee, etc.
+- **`mcp__plugin_patsy_atlassian__search`** - Natural language search (Rovo)
+  - Parameters: `query` (string) - Natural language search query
+  - Returns: Array of results with ARI identifiers for Jira and Confluence content
+  - Use this for simple queries like "my open tickets" or "bugs in project X"
+  - Follow up with `fetch` to get full details
 
-- **`atlassian:getJiraIssue`** - Get a specific issue by key
-  - Parameters: `issueKey` (string, e.g., "PROJ-123")
+- **`mcp__plugin_patsy_atlassian__fetch`** - Get content by ARI
+  - Parameters: `id` (string) - ARI from search results
+  - Returns: Full details of the Jira issue or Confluence page
+  - Use this after search to get complete information
+
+- **`mcp__plugin_patsy_atlassian__searchJiraIssuesUsingJql`** - Search using JQL
+  - Parameters:
+    - `cloudId` (string) - Atlassian cloud instance ID or site URL
+    - `jql` (string) - JQL query
+    - `maxResults` (number, default 50, max 100)
+    - `fields` (array, optional) - Specific fields to return
+    - `nextPageToken` (string, optional) - For pagination
+  - Returns: Array of issue objects with requested fields
+  - Use this for precise, complex queries requiring JQL syntax
+
+- **`mcp__plugin_patsy_atlassian__getJiraIssue`** - Get a specific issue by key
+  - Parameters:
+    - `cloudId` (string) - Atlassian cloud instance ID or site URL
+    - `issueIdOrKey` (string) - Issue key (e.g., "PROJ-123")
   - Returns: Full issue details
 
 ### When to Use MCP vs CLI
@@ -284,8 +327,41 @@ The Atlassian MCP Server provides these JIRA-related tools:
 - Want to avoid CLI installation
 - Prefer structured JSON output
 
+**Use Natural Language Search (Rovo) when:**
+- User query is simple and conversational
+- Searching across both Jira and Confluence
+- Don't need precise JQL filtering
+- Want fastest, simplest results
+
+**Use JQL Search when:**
+- Need precise filtering with multiple conditions
+- Searching by specific fields or date ranges
+- Using JQL functions (currentUser(), openSprints(), etc.)
+- Need exact control over ordering and limits
+
 **Use CLI when:**
 - MCP server is not configured
 - Need interactive table output
 - Working with custom acli configurations
 - Performing batch operations
+
+### Example MCP Workflows
+
+**Natural language search:**
+```
+1. Use mcp__plugin_patsy_atlassian__search with:
+   query: "my open high priority bugs"
+
+2. Get full details for a result:
+   Use mcp__plugin_patsy_atlassian__fetch with:
+   id: "ari:cloud:jira:cloudId:issue/12345"
+```
+
+**JQL search with specific fields:**
+```
+1. Use mcp__plugin_patsy_atlassian__searchJiraIssuesUsingJql with:
+   cloudId: "your-cloud-id"
+   jql: "project = PROJ AND status = 'In Progress' ORDER BY priority DESC"
+   maxResults: 50
+   fields: ["key", "summary", "status", "priority", "assignee"]
+```
