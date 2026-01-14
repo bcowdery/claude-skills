@@ -10,7 +10,9 @@ allowed-tools:
 
 ## Overview
 
-Update existing JIRA tickets using the Atlassian CLI (`acli`), supporting comments, field updates, and status transitions.
+Update existing JIRA tickets using the Atlassian MCP Server or Atlassian CLI (`acli`), supporting comments, field updates, and status transitions.
+
+**Note: Prefer using the Atlassian MCP Server tools when available. The MCP server provides direct API integration without requiring CLI installation.**
 
 ## When to Use
 
@@ -27,19 +29,52 @@ Do NOT use this skill for:
 
 ## Quick Reference
 
+### MCP Server (Preferred)
+
+**Update Issue:**
+```
+atlassian:updateJiraIssue
+  issueKey: "KEY-123"
+  fields: {
+    assignee: { accountId: "user-id" },
+    labels: ["label1", "label2"],
+    summary: "Updated title"
+  }
+```
+
+**Add Comment:**
+```
+atlassian:addJiraComment
+  issueKey: "KEY-123"
+  body: "Comment text"
+```
+
+**Transition Status:**
+```
+atlassian:transitionJiraIssue
+  issueKey: "KEY-123"
+  transitionId: "transition-id"
+```
+
+### CLI Fallback
+
+**Add Comment:**
 ```bash
-# Add comment
 acli jira workitem comment create \
   --key "KEY-123" \
   --body "Comment text"
+```
 
-# Update fields
+**Update Fields:**
+```bash
 acli jira workitem edit \
   --key "KEY-123" \
   --assignee "@me" \
   --labels "label1,label2"
+```
 
-# Transition status
+**Transition Status:**
+```bash
 acli jira workitem transition \
   --key "KEY-123" \
   --status "In Progress"
@@ -47,12 +82,22 @@ acli jira workitem transition \
 
 ## Step-by-Step Process
 
-### 1. Get Ticket Key
+### 1. Check for MCP Server Availability
+
+First, check if the Atlassian MCP Server is available by looking for these tools:
+- `atlassian:updateJiraIssue` - Update issue fields
+- `atlassian:addJiraComment` - Add comments to issues
+- `atlassian:transitionJiraIssue` - Change issue status
+- `atlassian:getJiraIssue` - Get issue details (for validation)
+
+If MCP tools are available, prefer using them over the CLI approach.
+
+### 2. Get Ticket Key
 
 Extract ticket key from user input (e.g., "PROJ-123").
 Validate format: `UPPERCASE-NUMBER` pattern.
 
-### 2. Determine Update Type
+### 3. Determine Update Type
 
 Ask what to update:
 - Add a comment/work note
@@ -60,7 +105,7 @@ Ask what to update:
 - Transition status
 - Multiple updates at once
 
-### 3. Gather Update Information
+### 4. Gather Update Information
 
 **For Comments:**
 - Comment text (supports multi-line)
@@ -76,77 +121,21 @@ Ask what to update:
 - Target status (e.g., "In Progress", "Done", "Blocked")
 - Optional comment with transition
 
-### 4. Show Preview and Confirm
+### 5. Show Preview and Confirm
 
-Display the command(s) before execution.
+Display the operation before execution (whether using MCP or CLI).
 
-### 5. Execute Command(s)
+### 6. Execute Operation
 
-Run the appropriate acli command(s).
+Use the appropriate MCP tool or CLI command based on availability.
 
-### 6. Provide Summary
+### 7. Provide Summary
 
 Show confirmation with link to ticket.
 
-## Commands Reference
-
-### Add Comment
-```bash
-acli jira workitem comment create \
-  --key "KEY-123" \
-  --body "Comment text here"
-```
-
-### Update Single Field
-```bash
-acli jira workitem edit \
-  --key "KEY-123" \
-  --assignee "user@example.com"
-```
-
-### Update Multiple Fields
-```bash
-acli jira workitem edit \
-  --key "KEY-123" \
-  --assignee "@me" \
-  --labels "label1,label2" \
-  --summary "Updated summary"
-```
-
-### Transition Status
-```bash
-acli jira workitem transition \
-  --key "KEY-123" \
-  --status "In Progress"
-```
-
-### Transition with Comment
-```bash
-# Run sequentially
-acli jira workitem transition \
-  --key "KEY-123" \
-  --status "Done"
-
-acli jira workitem comment create \
-  --key "KEY-123" \
-  --body "Completed and deployed to production"
-```
-
-### Remove Assignee
-```bash
-acli jira workitem edit \
-  --key "KEY-123" \
-  --remove-assignee
-```
-
-### Remove Labels
-```bash
-acli jira workitem edit \
-  --key "KEY-123" \
-  --remove-labels "label1,label2"
-```
-
 ## Field Update Options
+
+When using MCP, fields are provided as a JSON object. When using CLI, use these flags:
 
 | Flag | Description |
 |------|-------------|
@@ -198,3 +187,66 @@ acli jira workitem edit \
   - "done" / "complete" → Done
   - "block" → Blocked
   - "review" → In Review
+
+## MCP Server Integration
+
+### Available Tools
+
+The Atlassian MCP Server provides these JIRA update tools:
+
+- **`atlassian:updateJiraIssue`** - Update issue fields
+  - Parameters: `issueKey` (string), `fields` (object with field names and values)
+  - Returns: Updated issue details
+  - Example fields: `summary`, `description`, `assignee`, `labels`, `priority`
+
+- **`atlassian:addJiraComment`** - Add a comment to an issue
+  - Parameters: `issueKey` (string), `body` (string - comment text)
+  - Returns: Created comment details
+
+- **`atlassian:transitionJiraIssue`** - Change issue status
+  - Parameters: `issueKey` (string), `transitionId` (string or number)
+  - Returns: Updated issue with new status
+  - Note: Use `atlassian:getJiraIssue` first to discover available transitions
+
+- **`atlassian:getJiraIssue`** - Get issue details
+  - Parameters: `issueKey` (string)
+  - Returns: Full issue details including available transitions
+  - Use this to validate the issue exists and get transition IDs
+
+### MCP vs CLI Usage
+
+**Use MCP Server when:**
+- Available in the environment
+- Need structured responses
+- Want consistent error handling
+- Prefer direct API integration
+
+**Use CLI when:**
+- MCP server is not configured
+- Need interactive prompts
+- Working with custom acli configurations
+- Performing complex field updates not supported by MCP
+
+### Example MCP Workflows
+
+**Update multiple fields:**
+```
+1. Use atlassian:updateJiraIssue with:
+   issueKey: "KEY-123"
+   fields: {
+     summary: "New title",
+     labels: ["bug", "high-priority"],
+     assignee: { accountId: "user-id" }
+   }
+```
+
+**Add comment and transition:**
+```
+1. Use atlassian:addJiraComment with:
+   issueKey: "KEY-123"
+   body: "Work completed, moving to Done"
+
+2. Use atlassian:transitionJiraIssue with:
+   issueKey: "KEY-123"
+   transitionId: "31"
+```

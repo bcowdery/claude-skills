@@ -10,7 +10,9 @@ allowed-tools:
 
 ## Overview
 
-Search for JIRA tickets using JQL (JIRA Query Language) via the Atlassian CLI (`acli`), supporting both predefined quick filters and custom queries with formatted results.
+Search for JIRA tickets using JQL (JIRA Query Language) via the Atlassian MCP Server or Atlassian CLI (`acli`), supporting both predefined quick filters and custom queries with formatted results.
+
+**Note: Prefer using the Atlassian MCP Server tools when available. The MCP server provides direct API integration without requiring CLI installation.**
 
 ## When to Use
 
@@ -27,6 +29,37 @@ Do NOT use this skill for:
 
 ## Quick Reference
 
+### MCP Server (Preferred)
+
+**Search Issues:**
+```
+atlassian:searchJiraIssues
+  jql: "assignee = currentUser() AND status NOT IN (Done, Closed)"
+  maxResults: 50
+```
+
+**Get Single Issue:**
+```
+atlassian:getJiraIssue
+  issueKey: "KEY-123"
+```
+
+### CLI Fallback
+
+**Search Issues:**
+```bash
+acli jira workitem search \
+  --jql "assignee = currentUser() AND status NOT IN (Done, Closed)" \
+  --limit 50
+```
+
+**Get Single Issue:**
+```bash
+acli jira workitem search \
+  --jql "key = KEY-123" \
+  --limit 1
+```
+
 ### Quick Filters
 
 | Shortcut | JQL |
@@ -40,23 +73,23 @@ Do NOT use this skill for:
 | `unassigned` | `assignee is EMPTY AND status != Done` |
 | `sprint` | `sprint in openSprints()` |
 
-### Basic Command
-
-```bash
-acli jira workitem search \
-  --jql "YOUR JQL QUERY" \
-  --limit 50
-```
-
 ## Step-by-Step Process
 
-### 1. Understand User Intent
+### 1. Check for MCP Server Availability
+
+First, check if the Atlassian MCP Server is available by looking for these tools:
+- `atlassian:searchJiraIssues` - Search for JIRA issues using JQL
+- `atlassian:getJiraIssue` - Get a specific JIRA issue by key
+
+If MCP tools are available, prefer using them over the CLI approach described below.
+
+### 2. Understand User Intent
 
 Parse the request to determine:
 - Quick filter or custom search?
 - Search parameters: assignee, status, project, labels, etc.
 
-### 2. Build JQL Query
+### 3. Build JQL Query
 
 **Natural Language Mapping:**
 
@@ -76,7 +109,19 @@ Parse the request to determine:
 project = KEY AND status = "In Progress" AND assignee = currentUser()
 ```
 
-### 3. Execute Search
+### 4. Execute Search
+
+**Option A: Using MCP Server (Preferred)**
+
+If the Atlassian MCP Server is available, use the `atlassian:searchJiraIssues` tool:
+
+```
+Use the atlassian:searchJiraIssues tool with:
+- jql: "assignee = currentUser() AND status NOT IN (Done, Closed)"
+- maxResults: 50
+```
+
+**Option B: Using Atlassian CLI (Fallback)**
 
 ```bash
 acli jira workitem search \
@@ -86,7 +131,7 @@ acli jira workitem search \
 
 Add `--json` for programmatic parsing or omit for table output.
 
-### 4. Format Results
+### 5. Format Results
 
 **Compact format** (5+ results):
 ```
@@ -109,7 +154,7 @@ Description: Implement JWT-based authentication...
 Link: https://your-domain.atlassian.net/browse/PROJ-101
 ```
 
-### 5. Provide Summary
+### 6. Provide Summary
 
 - Total count and breakdown by status/priority if relevant
 - Suggest refinements if too many (50+) or no results
@@ -175,7 +220,7 @@ text ~ "authentication" AND project = KEY
 "Epic Link" = EPIC-123 ORDER BY rank ASC
 ```
 
-## Command Variations
+## Advanced CLI Usage
 
 ### With Specific Fields (JSON)
 ```bash
@@ -216,3 +261,31 @@ acli jira workitem search \
 - **Invalid values**: Status, priority values vary by project configuration
 - **Permission errors**: User may not have access to some projects
 - **Too many results**: Add filters or reduce limit
+
+## MCP Server Integration
+
+### Available Tools
+
+The Atlassian MCP Server provides these JIRA-related tools:
+
+- **`atlassian:searchJiraIssues`** - Search for issues using JQL
+  - Parameters: `jql` (string), `maxResults` (number, default 50)
+  - Returns: Array of issue objects with key, summary, status, assignee, etc.
+
+- **`atlassian:getJiraIssue`** - Get a specific issue by key
+  - Parameters: `issueKey` (string, e.g., "PROJ-123")
+  - Returns: Full issue details
+
+### When to Use MCP vs CLI
+
+**Use MCP Server when:**
+- Available in the environment
+- Need consistent API responses
+- Want to avoid CLI installation
+- Prefer structured JSON output
+
+**Use CLI when:**
+- MCP server is not configured
+- Need interactive table output
+- Working with custom acli configurations
+- Performing batch operations

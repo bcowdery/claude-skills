@@ -11,7 +11,9 @@ allowed-tools:
 
 ## Overview
 
-Create well-structured JIRA tickets using the Atlassian CLI (`acli`), guiding users through gathering required information and formatting descriptions using a consistent template.
+Create well-structured JIRA tickets using the Atlassian MCP Server or Atlassian CLI (`acli`), guiding users through gathering required information and formatting descriptions using a consistent template.
+
+**Note: Prefer using the Atlassian MCP Server tools when available. The MCP server provides direct API integration without requiring CLI installation.**
 
 ## When to Use
 
@@ -27,38 +29,66 @@ Do NOT use this skill for:
 
 ## Quick Reference
 
+### MCP Server (Preferred)
+
+**Create Issue:**
+```
+atlassian:createJiraIssue
+  project: "KEY"
+  issueType: "Story"
+  summary: "Ticket summary"
+  description: "Description text"
+  fields: {
+    assignee: { accountId: "user-id" },
+    labels: ["bug", "urgent"],
+    priority: { name: "High" }
+  }
+```
+
+### CLI Fallback
+
+**Basic Create:**
 ```bash
-# Basic create
 acli jira workitem create \
   --project "KEY" \
   --type "Story" \
   --summary "Ticket summary" \
   --description "Description text"
+```
 
-# With optional fields
+**With Optional Fields:**
+```bash
 acli jira workitem create \
   --project "KEY" \
   --type "Bug" \
   --summary "Fix login issue" \
-  --description "..." \
+  --description-file "/tmp/description.md" \
   --assignee "@me" \
   --label "bug,urgent"
 ```
 
 ## Step-by-Step Process
 
-### 1. Read the Issue Template
+### 1. Check for MCP Server Availability
 
-First, read `references/issue_template.md` in this skill directory to understand the expected ticket structure.
+First, check if the Atlassian MCP Server is available by looking for these tools:
+- `atlassian:createJiraIssue` - Create new issues
+- `atlassian:getJiraIssue` - Get issue details (for validation)
 
-### 2. Gather Required Information
+If MCP tools are available, prefer using them over the CLI approach.
+
+### 2. Read the Issue Template
+
+Read `references/issue_template.md` in this skill directory to understand the expected ticket structure.
+
+### 3. Gather Required Information
 
 Collect from user:
 - **Project key** (e.g., "PROJ", "ENG", "PLAT")
 - **Issue type** (Story, Bug, Task, Epic)
 - **Summary** (concise, action-oriented title)
 
-### 3. Gather Description Components
+### 4. Gather Description Components
 
 **For Stories:**
 - User Story: "As a [role] I want to [action] because [reason]"
@@ -80,7 +110,7 @@ Collect from user:
 - Acceptance Criteria: Success criteria
 - Technical Details: Approach or requirements (optional)
 
-### 4. Gather Optional Information
+### 5. Gather Optional Information
 
 Ask if user wants to specify:
 - Assignee (email or "@me" for self-assign)
@@ -90,7 +120,7 @@ Ask if user wants to specify:
 - Components (comma-separated)
 - Story points (for Stories)
 
-### 5. Format Description
+### 6. Format Description
 
 Build description using template structure:
 - Use appropriate template for issue type
@@ -98,19 +128,35 @@ Build description using template structure:
 - Preserve emoji markers for visual hierarchy
 - Format acceptance criteria as checkboxes
 
-### 6. Validate Input
+### 7. Validate Input
 
 - Project key: uppercase alphanumeric (e.g., "PROJ")
 - Summary: < 255 characters
 - Epic link format: KEY-123
 - Labels: no spaces in individual labels
 
-### 7. Show Preview and Confirm
+### 8. Show Preview and Confirm
 
-Display the formatted description and command before execution.
+Display the formatted description and operation before execution (whether using MCP or CLI).
 
-### 8. Execute Command
+### 9. Execute Operation
 
+Use the appropriate MCP tool or CLI command based on availability.
+
+**MCP Example:**
+```
+atlassian:createJiraIssue with:
+  project: "PROJ"
+  issueType: "Story"
+  summary: "Add user authentication system"
+  description: "[formatted markdown description]"
+  fields: {
+    assignee: { accountId: "user-id" },
+    labels: ["security", "backend"]
+  }
+```
+
+**CLI Example:**
 ```bash
 acli jira workitem create \
   --project "PROJ" \
@@ -121,9 +167,9 @@ acli jira workitem create \
   --label "security,backend"
 ```
 
-For multi-line descriptions, use `--description-file` flag.
+For CLI with multi-line descriptions, use `--description-file` flag.
 
-### 9. Provide Summary
+### 10. Provide Summary
 
 Show created ticket key and link: `https://your-domain.atlassian.net/browse/PROJ-123`
 
@@ -229,3 +275,56 @@ This prompts for:
 - Jira URL (e.g., `https://your-domain.atlassian.net`)
 - Email address
 - API token (create at https://id.atlassian.com/manage-profile/security/api-tokens)
+
+## MCP Server Integration
+
+### Available Tools
+
+The Atlassian MCP Server provides these JIRA creation tools:
+
+- **`atlassian:createJiraIssue`** - Create a new issue
+  - Parameters:
+    - `project` (string) - Project key
+    - `issueType` (string) - Issue type (Story, Bug, Task, Epic)
+    - `summary` (string) - Issue title
+    - `description` (string) - Issue description (supports markdown)
+    - `fields` (object, optional) - Additional fields like assignee, labels, priority
+  - Returns: Created issue details with key and link
+
+- **`atlassian:getJiraIssue`** - Get issue details
+  - Parameters: `issueKey` (string)
+  - Returns: Full issue details
+  - Use this to validate the project exists or check created ticket
+
+### MCP vs CLI Usage
+
+**Use MCP Server when:**
+- Available in the environment
+- Need structured responses with issue key
+- Want consistent error handling
+- Prefer direct API integration
+
+**Use CLI when:**
+- MCP server is not configured
+- Need interactive prompts for fields
+- Working with custom acli configurations
+- Using description files for complex formatting
+
+### Example MCP Workflow
+
+**Create a story with full details:**
+```
+1. Use atlassian:createJiraIssue with:
+   project: "PROJ"
+   issueType: "Story"
+   summary: "Implement user authentication"
+   description: "# User Story\n\nAs a user I want to log in securely...\n\n## Acceptance Criteria\n\n- [ ] MUST support email/password login\n- [ ] SHOULD include 2FA option"
+   fields: {
+     assignee: { accountId: "user-id" },
+     labels: ["security", "backend"],
+     priority: { name: "High" },
+     components: [{ name: "Authentication" }]
+   }
+
+2. MCP returns issue key (e.g., "PROJ-123") and link
+```
