@@ -1,0 +1,13 @@
+{
+  "name": "patsy-marketplace",
+  "owner": {
+    "name": "Brian Cowdery"
+  },
+  "plugins": [
+    {
+      "name": "patsy",
+      "source": ".",
+      "description": "A eager collection of AI skills ready to do your bidding without asking questions. Your willing accomplice in code."
+    }
+  ]
+}

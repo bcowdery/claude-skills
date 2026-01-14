@@ -1,0 +1,6 @@
+{
+  "name": "patsy",
+  "version": "1.0.0",
+  "description": "A suite of development tools to handle the tedious bits; crafting pull requests, generating project plans, and performing structural refactoring — so you can take all the credit.",
+  "author": "Brian Cowdery"
+}
