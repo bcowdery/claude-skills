@@ -1,13 +1,20 @@
 {
   "name": "patsy-marketplace",
   "owner": {
-    "name": "Brian Cowdery"
+    "name": "Brian Cowdery",
+    "email": "brian@thebeardeddeveloper.co"
   },
   "plugins": [
     {
       "name": "patsy",
-      "source": ".",
-      "description": "A eager collection of AI skills ready to do your bidding without asking questions. Your willing accomplice in code."
+      
+      "description": "A eager collection of AI skills ready to do your bidding without asking questions. Your willing accomplice in code.",
+      "version": "0.1.0",
+      "source": "./",
+      "author": {
+        "name": "Brian Cowdery",
+        "email": "brian@thebeardeddeveloper.co"
+      }
     }
   ]
 }
