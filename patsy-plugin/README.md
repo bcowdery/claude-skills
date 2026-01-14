@@ -1,105 +1,106 @@
-# Claude Skills
+# Patsy Plugin
 
-Personal Claude Code skills, agents, and commands distributed as a plugin.
+A suite of development tools to handle the tedious bits: crafting pull requests, generating project plans, performing structural refactoring, and managing JIRA workflows — so you can take all the credit.
 
-## Structure
+## What's Included
 
-```
-claude-skills/
-├── .claude-plugin/
-│   ├── plugin.json       # Plugin manifest (required)
-│   └── marketplace.json  # Marketplace definition (for distribution)
-├── skills/               # Custom skills
-│   └── skill-name/
-│       ├── SKILL.md      # Required: skill definition
-│       ├── docs/         # Optional: additional documentation
-│       └── scripts/      # Optional: helper scripts
-├── agents/               # Custom subagents
-│   └── agent-name.md
-├── commands/             # Slash commands
-│   └── command-name.md
-└── install.sh            # Manual installation script
-```
+### Skills
+
+- **[/code-review](skills/code-review/SKILL.md)** - Perform comprehensive code reviews with structured feedback
+- **[/code-refactor](skills/code-refactor/SKILL.md)** - Guide structural code refactoring with analysis and planning
+- **[/write-plan](skills/write-plan/SKILL.md)** - Create detailed implementation plans for complex features
+- **[/write-skill](skills/write-skill/SKILL.md)** - Scaffold and author new Claude Code skills
+- **[/jira-search](skills/jira-search/SKILL.md)** - Search and analyze JIRA issues using JQL queries
+- **[/jira-create](skills/jira-create/SKILL.md)** - Create new JIRA issues with proper formatting
+- **[/jira-update](skills/jira-update/SKILL.md)** - Update existing JIRA issues (status, assignee, etc.)
+- **[/jira-backlog-summary](skills/jira-backlog-summary/SKILL.md)** - Generate summaries of your JIRA backlog
+
+### Agents
+
+- **[code-reviewer](agents/code-reviewer.md)** - Specialized agent for in-depth code analysis and review
 
 ## Installation
 
-### Plugin Marketplace (Recommended)
-
-After pushing this repo to GitHub, install using the Claude Code plugin system:
+### Via Claude Code Plugin System
 
 ```bash
-# Add this repo as a marketplace
-/plugin marketplace add bcowdery/claude-skills
-
-# Install the plugin
-/plugin install patsy@patsy-marketplace
-```
-
-Or install directly from GitHub without adding a marketplace:
-
-```bash
-/plugin install bcowdery/claude-skills
-```
-
-### Manual Installation (Development)
-
-For local development or if you prefer symlinks:
-
-```bash
-# Clone the repository
-git clone git@github.com:bcowdery/claude-skills.git ~/.claude-skills
-
-# Run the install script (creates symlinks to ~/.claude/)
-~/.claude-skills/install.sh
-```
-
-## Updating
-
-### Plugin System
-
-```bash
-/plugin marketplace update patsy-marketplace
+/plugin install bcowdery/claude-skills/patsy-plugin
 ```
 
 ### Manual Installation
 
+From the repository root:
+
 ```bash
-cd ~/.claude-skills
-git pull
 ./install.sh
 ```
 
-## Plugin Configuration Files
+The install script will symlink all skills and agents to `~/.claude/` for use across all projects.
 
-### plugin.json
+## Configuration
 
-The plugin manifest at `.claude-plugin/plugin.json`:
+### JIRA Integration
 
-```json
-{
-  "name": "patsy",
-  "version": "1.0.0",
-  "description": "A suite of development tools to handle the tedious bits; crafting pull requests, generating project plans, and performing structural refactoring — so you can take all the credit.",
-  "author": "Brian Cowdery"
-}
+The JIRA-related skills require environment variables for authentication:
+
+```bash
+export JIRA_BASE_URL="https://your-domain.atlassian.net"
+export JIRA_USER_EMAIL="your-email@example.com"
+export JIRA_API_TOKEN="your-api-token"
 ```
 
-### marketplace.json
+Add these to your shell configuration (`.zshrc`, `.bashrc`, etc.) or use a `.env` file in your project.
 
-The marketplace definition at `.claude-plugin/marketplace.json` allows this repo to act as both a plugin and a marketplace:
+**Generate an API token**: https://id.atlassian.com/manage-profile/security/api-tokens
 
-```json
-{
-  "name": "brian-marketplace",
-  "owner": {
-    "name": "Brian Cowdery"
-  },
-  "plugins": [
-    {
-      "name": "patsy",
-      "source": ".",
-      "description": "A eager collection of AI skills ready to do your bidding without asking questions. Your willing accomplice in code."
-    }
-  ]
-}
+## Usage
+
+Once installed, invoke skills using the `/` slash command prefix:
+
+```bash
+# Review code changes in the current branch
+/code-review
+
+# Create a detailed implementation plan
+/write-plan Add user authentication with OAuth2
+
+# Search JIRA for issues
+/jira-search status = "In Progress" AND assignee = currentUser()
+
+# Create a new JIRA issue
+/jira-create
 ```
+
+## Development
+
+### Adding New Skills
+
+Use the `/write-skill` skill to scaffold new skills with proper structure:
+
+```bash
+/write-skill
+```
+
+This will guide you through creating a new skill with:
+- Proper YAML frontmatter
+- Markdown instructions following Anthropic best practices
+- Reference materials and helper scripts
+
+### Testing Changes
+
+After modifying skills locally, reload them by re-running the install script:
+
+```bash
+cd ~/.claude-skills
+./install.sh
+```
+
+## About
+
+**Author**: Brian Cowdery (brian@thebeardeddeveloper.co)
+**License**: MIT
+**Repository**: https://github.com/bcowdery/claude-skills
+
+---
+
+*Patsy: Your willing accomplice in code. An eager collection of AI skills ready to do your bidding without asking questions.*

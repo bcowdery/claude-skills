@@ -61,7 +61,7 @@ remove_symlinks() {
 }
 
 install() {
-    info "Installing Claude skills from: $SCRIPT_DIR"
+    info "Installing Claude plugins from: $SCRIPT_DIR"
     echo ""
 
     # Create ~/.claude directories if they don't exist
@@ -69,38 +69,41 @@ install() {
     mkdir -p "${CLAUDE_DIR}/agents"
     mkdir -p "${CLAUDE_DIR}/commands"
 
-    # Install skills (each skill is a directory)
-    if [[ -d "${SCRIPT_DIR}/skills" ]]; then
-        info "Installing skills..."
-        for skill in "${SCRIPT_DIR}/skills"/*; do
-            if [[ -d "$skill" ]]; then
-                create_symlink "$skill" "${CLAUDE_DIR}/skills/$(basename "$skill")"
-            fi
-        done
-        echo ""
-    fi
+    # Find all plugin directories containing .claude-plugin/plugin.json
+    for plugin_dir in "${SCRIPT_DIR}"/*/; do
+        if [[ -f "${plugin_dir}.claude-plugin/plugin.json" ]]; then
+            local plugin_name=$(basename "$plugin_dir")
+            info "Installing plugin: $plugin_name"
 
-    # Install agents (each agent is a file)
-    if [[ -d "${SCRIPT_DIR}/agents" ]]; then
-        info "Installing agents..."
-        for agent in "${SCRIPT_DIR}/agents"/*.md; do
-            if [[ -f "$agent" ]]; then
-                create_symlink "$agent" "${CLAUDE_DIR}/agents/$(basename "$agent")"
+            # Install skills (each skill is a directory)
+            if [[ -d "${plugin_dir}skills" ]]; then
+                for skill in "${plugin_dir}skills"/*; do
+                    if [[ -d "$skill" ]]; then
+                        create_symlink "$skill" "${CLAUDE_DIR}/skills/$(basename "$skill")"
+                    fi
+                done
             fi
-        done
-        echo ""
-    fi
 
-    # Install commands (each command is a file)
-    if [[ -d "${SCRIPT_DIR}/commands" ]]; then
-        info "Installing commands..."
-        for cmd in "${SCRIPT_DIR}/commands"/*.md; do
-            if [[ -f "$cmd" ]]; then
-                create_symlink "$cmd" "${CLAUDE_DIR}/commands/$(basename "$cmd")"
+            # Install agents (each agent is a file)
+            if [[ -d "${plugin_dir}agents" ]]; then
+                for agent in "${plugin_dir}agents"/*.md; do
+                    if [[ -f "$agent" ]]; then
+                        create_symlink "$agent" "${CLAUDE_DIR}/agents/$(basename "$agent")"
+                    fi
+                done
             fi
-        done
-        echo ""
-    fi
+
+            # Install commands (each command is a file)
+            if [[ -d "${plugin_dir}commands" ]]; then
+                for cmd in "${plugin_dir}commands"/*.md; do
+                    if [[ -f "$cmd" ]]; then
+                        create_symlink "$cmd" "${CLAUDE_DIR}/commands/$(basename "$cmd")"
+                    fi
+                done
+            fi
+            echo ""
+        fi
+    done
 
     success "Installation complete!"
     echo ""
