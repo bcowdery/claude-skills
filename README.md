@@ -27,11 +27,15 @@ Each plugin directory must contain a [.claude-plugin/plugin.json](patsy-plugin/.
 
 ### Plugin Marketplace (Recommended)
 
+In Claude Code, register the marketplace:
+```bash
+/plugin marketplace add bcowdery/claude-skills
+```
+
 Install individual plugins using the Claude Code plugin system:
 
 ```bash
-# Install the patsy plugin
-/plugin install bcowdery/claude-skills/patsy-plugin
+/plugin install patsy@patsy-marketplace
 ```
 
 ### Manual Installation (Development)
@@ -44,9 +48,12 @@ git clone git@github.com:bcowdery/claude-skills.git ~/.claude-skills
 
 # Run the install script (creates symlinks to ~/.claude/ for all plugins)
 ~/.claude-skills/install.sh
+
+# Or, run Claude Code with the --plugin-dir to load your plugins for that session
+claude --plugin-dir ~/.claude-skills/patsy-plugin
 ```
 
-The install script will automatically discover and install all plugins in the repository that contain a [.claude-plugin/plugin.json](patsy-plugin/.claude-plugin/plugin.json) manifest.
+> 💡 The install script will automatically discover and install all plugins in the repository that contain a [.claude-plugin/plugin.json](patsy-plugin/.claude-plugin/plugin.json) manifest.
 
 ## Updating
 
