@@ -35,7 +35,7 @@ In Claude Code, register the marketplace:
 Install individual plugins using the Claude Code plugin system:
 
 ```bash
-/plugin install patsy@patsy-marketplace
+/plugin install patsy@bcowdery-claude-skills
 ```
 
 ### Manual Installation (Development)
