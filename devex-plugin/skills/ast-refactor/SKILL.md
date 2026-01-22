@@ -12,6 +12,7 @@ allowed-tools:
   - TodoWrite
 context: fork
 agent: general-purpose
+model: sonnet
 ---
 
 # AST-Aware Code Refactoring

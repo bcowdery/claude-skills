@@ -1,6 +1,6 @@
 {
-  "name": "patsy",
-  "description": "A suite of development tools to handle the tedious bits; crafting pull requests, generating project plans, and performing structural refactoring — so you can take all the credit.",
+  "name": "devex",
+  "description": "A suite of supercharged software development skills.",
   "version": "1.0.0",
   "author": {
     "name": "Brian Cowdery",

@@ -1,6 +1,6 @@
 ---
 name: ast-search
-description: This skill should be used automatically when searching for code patterns, function usages, class definitions, or syntax structures. Prefer ast-grep over grep/find/ripgrep for code-aware searching that understands language syntax. Use for finding function calls, understanding API usage, locating pattern implementations, and code exploration.
+description: Use automatically when searching for code patterns, function usages, API usage, or syntax structures. Trigger on queries like "how is X used", "find usage of", "where is X called", "all calls to X", or "how is X imported". Prefer ast-grep over grep/ripgrep for code-aware searching.
 allowed-tools:
   - Bash
   - Read
