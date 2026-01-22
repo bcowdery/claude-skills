@@ -35,7 +35,7 @@ In Claude Code, register the marketplace:
 Install individual plugins using the Claude Code plugin system:
 
 ```bash
-/plugin install patsy@bcowdery-claude-skills
+/plugin install devex@bcowdery-claude-skills
 ```
 
 ### Manual Installation (Development)
@@ -50,17 +50,17 @@ git clone git@github.com:bcowdery/claude-skills.git ~/.claude-skills
 ~/.claude-skills/install.sh
 
 # Or, run Claude Code with the --plugin-dir to load your plugins for that session
-claude --plugin-dir ~/.claude-skills/patsy-plugin
+claude --plugin-dir ~/.claude-skills/devex-plugin
 ```
 
-> 💡 The install script will automatically discover and install all plugins in the repository that contain a [.claude-plugin/plugin.json](patsy-plugin/.claude-plugin/plugin.json) manifest.
+> 💡 The install script will automatically discover and install all plugins in the repository that contain a [.claude-plugin/plugin.json](devex-plugin/.claude-plugin/plugin.json) manifest.
 
 ## Updating
 
 ### Plugin System
 
 ```bash
-/plugin update patsy
+/plugin update devex
 ```
 
 ### Manual Installation
@@ -73,8 +73,8 @@ git pull
 
 ## Plugins
 
-### Patsy
+### Devex
 
-A suite of development tools to handle the tedious bits: crafting pull requests, generating project plans, and performing structural refactoring — so you can take all the credit.
+A  suite of supercharged software development skills.
 
-See [patsy-plugin/README.md](patsy-plugin/README.md) for details.
+See [devex-plugin/README.md](devex-plugin/README.md) for details.

@@ -1,19 +1,16 @@
 # Patsy Plugin
 
-A suite of development tools to handle the tedious bits: crafting pull requests, generating project plans, performing structural refactoring, and managing JIRA workflows — so you can take all the credit.
+A suite of development tools to handle the tedious bits: crafting pull requests, generating project plans, performing structural refactoring.
 
 ## What's Included
 
 ### Skills
 
+- **[/ast-refactor](skills/code-refactor/SKILL.md)** - Guide structural code refactoring with analysis and planning
+- **[/ast-search](skills/code-refactor/SKILL.md)** - Guide structural code searches, helps claude understand your codebase
 - **[/code-review](skills/code-review/SKILL.md)** - Perform comprehensive code reviews with structured feedback
-- **[/code-refactor](skills/code-refactor/SKILL.md)** - Guide structural code refactoring with analysis and planning
-- **[/write-plan](skills/write-plan/SKILL.md)** - Create detailed implementation plans for complex features
+- **[/write-plan](skills/write-plan/SKILL.md)** - Create detailed implementation plans using TDD for complex features
 - **[/write-skill](skills/write-skill/SKILL.md)** - Scaffold and author new Claude Code skills
-- **[/jira-search](skills/jira-search/SKILL.md)** - Search and analyze JIRA issues using JQL queries
-- **[/jira-create](skills/jira-create/SKILL.md)** - Create new JIRA issues with proper formatting
-- **[/jira-update](skills/jira-update/SKILL.md)** - Update existing JIRA issues (status, assignee, etc.)
-- **[/jira-backlog-summary](skills/jira-backlog-summary/SKILL.md)** - Generate summaries of your JIRA backlog
 
 ### Agents
 
@@ -36,40 +33,6 @@ From the repository root:
 ```
 
 The install script will symlink all skills and agents to `~/.claude/` for use across all projects.
-
-## Configuration
-
-### JIRA Integration
-
-The JIRA-related skills require environment variables for authentication:
-
-```bash
-export JIRA_BASE_URL="https://your-domain.atlassian.net"
-export JIRA_USER_EMAIL="your-email@example.com"
-export JIRA_API_TOKEN="your-api-token"
-```
-
-Add these to your shell configuration (`.zshrc`, `.bashrc`, etc.) or use a `.env` file in your project.
-
-**Generate an API token**: https://id.atlassian.com/manage-profile/security/api-tokens
-
-## Usage
-
-Once installed, invoke skills using the `/` slash command prefix:
-
-```bash
-# Review code changes in the current branch
-/code-review
-
-# Create a detailed implementation plan
-/write-plan Add user authentication with OAuth2
-
-# Search JIRA for issues
-/jira-search status = "In Progress" AND assignee = currentUser()
-
-# Create a new JIRA issue
-/jira-create
-```
 
 ## Development
 
@@ -100,7 +63,3 @@ cd ~/.claude-skills
 **Author**: Brian Cowdery (brian@thebeardeddeveloper.co)
 **License**: MIT
 **Repository**: https://github.com/bcowdery/claude-skills
-
----
-
-*Patsy: Your willing accomplice in code. An eager collection of AI skills ready to do your bidding without asking questions.*
