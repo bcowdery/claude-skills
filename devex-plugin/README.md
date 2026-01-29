@@ -1,4 +1,4 @@
-# Patsy Plugin
+# Devex Plugin
 
 A suite of development tools to handle the tedious bits: crafting pull requests, generating project plans, performing structural refactoring.
 
@@ -21,7 +21,7 @@ A suite of development tools to handle the tedious bits: crafting pull requests,
 ### Via Claude Code Plugin System
 
 ```bash
-/plugin install bcowdery/claude-skills/patsy-plugin
+/plugin install bcowdery/claude-skills/devex-plugin
 ```
 
 ### Manual Installation

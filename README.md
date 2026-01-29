@@ -6,7 +6,7 @@ A collection of Claude Code plugins containing custom skills, agents, and comman
 
 ```
 claude-skills/
-├── patsy-plugin/         # Plugin directory
+├── devex-plugin/         # Plugin directory
 │   ├── .claude-plugin/
 │   │   └── plugin.json   # Plugin manifest (required)
 │   ├── skills/           # Custom skills
@@ -21,7 +21,7 @@ claude-skills/
 └── install.sh            # Manual installation script
 ```
 
-Each plugin directory must contain a [.claude-plugin/plugin.json](patsy-plugin/.claude-plugin/plugin.json) manifest file.
+Each plugin directory must contain a [.claude-plugin/plugin.json](devex-plugin/.claude-plugin/plugin.json) manifest file.
 
 ## Installation
 
