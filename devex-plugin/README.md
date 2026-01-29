@@ -8,6 +8,7 @@ A suite of development tools to handle the tedious bits: crafting pull requests,
 
 - **[/ast-refactor](skills/code-refactor/SKILL.md)** - Guide structural code refactoring with analysis and planning
 - **[/ast-search](skills/code-refactor/SKILL.md)** - Guide structural code searches, helps claude understand your codebase
+- **[/brainstorm](skills/brainstorm/SKILL.md)** - Brainstorming skill for software architecture design, planning, refactoring and investigation
 - **[/code-review](skills/code-review/SKILL.md)** - Perform comprehensive code reviews with structured feedback
 - **[/write-plan](skills/write-plan/SKILL.md)** - Create detailed implementation plans using TDD for complex features
 - **[/write-skill](skills/write-skill/SKILL.md)** - Scaffold and author new Claude Code skills
