@@ -12,6 +12,7 @@ A suite of development tools to handle the tedious bits: crafting pull requests,
 - **[/code-review](skills/code-review/SKILL.md)** - Perform comprehensive code reviews with structured feedback
 - **[/write-plan](skills/write-plan/SKILL.md)** - Create detailed implementation plans using TDD for complex features
 - **[/write-skill](skills/write-skill/SKILL.md)** - Scaffold and author new Claude Code skills
+- **[/statusline-setup](skills/statusline-setup/SKILL.md)** - Install a Starship-style status line showing project, git branch, model, cost, and token usage
 
 ### Agents
 

@@ -71,10 +71,20 @@ git pull
 ./install.sh
 ```
 
+## Post-Install Setup
+
+### Status Line
+
+Install a Starship-style status line that shows project context, git branch, model, cost, and token usage:
+
+```bash
+/devex:statusline-setup
+```
+
 ## Plugins
 
 ### Devex
 
-A  suite of supercharged software development skills.
+A suite of supercharged software development skills.
 
 See [devex-plugin/README.md](devex-plugin/README.md) for details.
