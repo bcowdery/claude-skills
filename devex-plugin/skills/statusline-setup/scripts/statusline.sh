@@ -37,8 +37,15 @@ PROJECT=$(basename "$DIR")
 
 # Get git branch (if in a git repo)
 GIT_BRANCH=""
+IS_WORKTREE=""
 if [[ -n "$DIR" ]] && [[ -d "$DIR" ]]; then
     GIT_BRANCH=$(git -C "$DIR" rev-parse --abbrev-ref HEAD 2>/dev/null)
+    # Detect worktree: git-dir differs from git-common-dir when in a worktree
+    GIT_DIR=$(git -C "$DIR" rev-parse --git-dir 2>/dev/null)
+    GIT_COMMON_DIR=$(git -C "$DIR" rev-parse --git-common-dir 2>/dev/null)
+    if [[ -n "$GIT_DIR" ]] && [[ -n "$GIT_COMMON_DIR" ]] && [[ "$GIT_DIR" != "$GIT_COMMON_DIR" ]]; then
+        IS_WORKTREE=1
+    fi
 fi
 
 # Shorten model name (e.g., "Claude 3.5 Sonnet" -> "Sonnet 3.5", "Claude Opus 4.5" -> "Opus 4.5")
@@ -84,6 +91,13 @@ ICON_OUTPUT="󰁞"
 ICON_CONTEXT="󰾅"
 ICON_BRANCH="󰘬"
 ICON_COST="󰮯"
+ICON_WORKTREE="󰜘"
+
+# Build worktree indicator (shown after project name)
+WORKTREE_SEGMENT=""
+if [[ -n "$IS_WORKTREE" ]]; then
+    WORKTREE_SEGMENT=" ${LIGHT_GRAY}worktree${RESET}"
+fi
 
 # Build git branch segment (with "on" separator, Starship style)
 GIT_SEGMENT=""
@@ -93,4 +107,4 @@ fi
 
 # Build status line with Starship-style formatting
 # Format: 󰉖 Workspace on 󰘬 main using 󰧑 Opus 4.6 · $0.123 spent on 󰁆 139k 󰁞 109k 󰾅 12%
-echo -e "${BLUE}${ICON_FOLDER} ${PROJECT}${RESET}${GIT_SEGMENT} ${LIGHT_GRAY}using${RESET} ${MAGENTA}${ICON_MODEL} ${SHORT_MODEL}${RESET} ${GRAY}·${RESET} ${WHITE}\$${COST_FMT}${RESET} ${LIGHT_GRAY}spent on${RESET} ${GREEN}${ICON_INPUT} ${INPUT_FMT} ${ICON_OUTPUT} ${OUTPUT_FMT}${RESET} ${YELLOW}${ICON_CONTEXT} ${CONTEXT_PCT_FMT}%${RESET}"
+echo -e "${BLUE}${ICON_FOLDER} ${PROJECT}${RESET}${WORKTREE_SEGMENT}${GIT_SEGMENT} ${LIGHT_GRAY}using${RESET} ${MAGENTA}${ICON_MODEL} ${SHORT_MODEL}${RESET} ${GRAY}·${RESET} ${WHITE}\$${COST_FMT}${RESET} ${LIGHT_GRAY}spent on${RESET} ${GREEN}${ICON_INPUT} ${INPUT_FMT} ${ICON_OUTPUT} ${OUTPUT_FMT}${RESET} ${YELLOW}${ICON_CONTEXT} ${CONTEXT_PCT_FMT}%${RESET}"

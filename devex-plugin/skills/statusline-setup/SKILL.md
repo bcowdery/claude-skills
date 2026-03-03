@@ -20,7 +20,7 @@ The installed status line renders as:
 | Segment | Color | Description |
 |---------|-------|-------------|
 | Project | Blue | Current workspace directory name |
-| Git Branch | Cyan | Active branch from workspace directory |
+| Git Branch | Cyan | Active branch from workspace directory (shows worktree indicator when in a git worktree) |
 | Model | Magenta | Shortened model name (e.g., "Opus 4.6", "Sonnet 4.6") |
 | Cost | White | Approximate session cost based on model pricing |
 | Tokens | Green | Input/output token counts (formatted as k/M) |
@@ -90,6 +90,7 @@ ICON_OUTPUT="󰁞"
 ICON_CONTEXT="󰾅"
 ICON_BRANCH="󰘬"
 ICON_COST="󰮯"
+ICON_WORKTREE="󰜘"
 ```
 
 ### Colors
